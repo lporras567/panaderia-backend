@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panadería Digital · Backend FastAPI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">🥐</div>
+    <div>
+      <div class="brand-name">Panadería Digital</div>
+      <div class="brand-sub">Backend · FastAPI + PostgreSQL</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Pasos del Backend</div>
+    <a href="#paso1"  class="nav-item active"><span class="nav-num">01</span><span>Arquitectura y Estructura</span></a>
+    <a href="#paso2"  class="nav-item"><span class="nav-num">02</span><span>Entorno de Desarrollo</span></a>
+    <a href="#paso3"  class="nav-item"><span class="nav-num">03</span><span>Modelo de Datos · DDL</span></a>
+    <a href="#paso4"  class="nav-item"><span class="nav-num">04</span><span>Config FastAPI · JWT · BD</span></a>
+    <a href="#paso5"  class="nav-item"><span class="nav-num">05</span><span>Modelos ORM · Schemas</span></a>
+    <a href="#paso6"  class="nav-item"><span class="nav-num">06</span><span>Endpoints · Autenticación</span></a>
+    <a href="#paso7"  class="nav-item"><span class="nav-num">07</span><span>Endpoints · Productos</span></a>
+    <a href="#paso8"  class="nav-item"><span class="nav-num">08</span><span>Endpoints · Clientes</span></a>
+    <a href="#paso9"  class="nav-item"><span class="nav-num">09</span><span>Endpoints · Facturas</span></a>
+    <a href="#paso10" class="nav-item"><span class="nav-num">10</span><span>WebSocket · Notificaciones</span></a>
+    <a href="#paso11" class="nav-item"><span class="nav-num">11</span><span>Pruebas y Verificación</span></a>
+    <a href="#resumen" class="nav-item"><span class="nav-num">◎</span><span>Resumen de Rutas API</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="progress-label">Progreso</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:9%"></div></div>
+    <div class="progress-text" id="progressText">Paso 1 de 11</div>
+  </div>
+</aside>
+
+<button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+<div class="overlay" id="overlay"></div>
+
+<main class="main">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">Sistema de Facturación Web · Guía Técnica</div>
+    <h1 class="hero-title">Backend con<br><em>FastAPI</em></h1>
+    <p class="hero-desc">Construcción completa del backend del sistema Panadería Digital: API REST, autenticación JWT, PostgreSQL con SQLAlchemy, WebSockets y RBAC por roles.</p>
+    <div class="hero-chips">
+      <span class="chip">Python 3.11+</span>
+      <span class="chip">FastAPI</span>
+      <span class="chip">PostgreSQL 15</span>
+      <span class="chip">JWT + bcrypt</span>
+      <span class="chip">SQLAlchemy 2.0</span>
+      <span class="chip">WebSockets</span>
+    </div>
+
+    <!-- Stack diagram -->
+    <div class="stack-box">
+      <div class="stack-title">Arquitectura del Sistema</div>
+      <div class="stack-diagram">
+        <div class="stack-layer client">
+          <div class="sl-icon">🌐</div>
+          <div class="sl-name">Cliente / Navegador</div>
+          <div class="sl-detail">HTTP + WebSocket</div>
+        </div>
+        <div class="stack-arrow">↓</div>
+        <div class="stack-layer nginx">
+          <div class="sl-icon">⚡</div>
+          <div class="sl-name">Nginx</div>
+          <div class="sl-detail">Reverse Proxy · /api/* → Backend</div>
+        </div>
+        <div class="stack-arrow">↓</div>
+        <div class="stack-layer fastapi">
+          <div class="sl-icon">🚀</div>
+          <div class="sl-name">FastAPI · Uvicorn</div>
+          <div class="sl-detail">REST API · JWT Auth · WebSocket · RBAC</div>
+        </div>
+        <div class="stack-arrow">↓</div>
+        <div class="stack-layer db">
+          <div class="sl-icon">🗄️</div>
+          <div class="sl-name">PostgreSQL 15</div>
+          <div class="sl-detail">SQLAlchemy 2.0 ORM · Alembic</div>
+        </div>
+      </div>
+      <div class="roles-box">
+        <div class="role-card admin-role">
+          <div class="role-name">👑 admin</div>
+          <div class="role-perms">CRUD productos · clientes · facturas · reportes</div>
+        </div>
+        <div class="role-card user-role">
+          <div class="role-name">👤 user (cliente)</div>
+          <div class="role-perms">Ver productos · registrarse · pedidos digitales</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 1 -->
+  <section class="module" id="paso1">
+    <div class="module-header">
+      <div class="module-num">01</div>
+      <div>
+        <h2 class="module-title">Arquitectura y Estructura del Proyecto</h2>
+        <p class="module-subtitle">Visión general y organización de carpetas</p>
+      </div>
+    </div>
+    <div class="theory-box">
+      <h3>Componentes del sistema</h3>
+      <div class="theory-grid">
+        <div class="theory-card"><div class="tc-icon">🚀</div><div class="tc-title">Backend · FastAPI</div><p>API REST monolítica con Python 3.11+. Documentación automática con Swagger UI en /docs.</p></div>
+        <div class="theory-card"><div class="tc-icon">🗄️</div><div class="tc-title">Base de datos · PostgreSQL</div><p>PostgreSQL 15 con SQLAlchemy 2.0 como ORM. Tipos ENUM nativos de PostgreSQL.</p></div>
+        <div class="theory-card"><div class="tc-icon">🔐</div><div class="tc-title">Seguridad · JWT + bcrypt</div><p>JSON Web Tokens para autenticación stateless. Contraseñas hasheadas con bcrypt.</p></div>
+        <div class="theory-card"><div class="tc-icon">📡</div><div class="tc-title">Tiempo real · WebSocket</div><p>Notificaciones instantáneas a admins cuando llega una compra digital de un cliente.</p></div>
+      </div>
+    </div>
+
+    <div class="code-step">
+      <div class="cs-header"><span class="cs-title">Estructura de carpetas del proyecto</span></div>
+      <div class="code-block">
+        <div class="code-toolbar"><span class="code-lang">bash · árbol del proyecto</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+        <pre><code>panaderia-digital/
+├── .env                          ← Variables de entorno (NO subir a Git)
+├── .env.example                  ← Plantilla sin valores reales
+├── docker-compose.yml            ← Orquestación de contenedores
+│
+├── backend/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── app/
+│       ├── __init__.py
+│       ├── main.py               ← Punto de entrada FastAPI
+│       ├── database.py           ← Conexión SQLAlchemy + PostgreSQL
+│       ├── models.py             ← Modelos ORM (tablas BD)
+│       ├── schemas.py            ← Schemas Pydantic (validación)
+│       ├── security.py           ← JWT + Hash bcrypt
+│       ├── dependencies.py       ← Dependencias (get_current_user)
+│       ├── notifications.py      ← WebSocket notificaciones
+│       └── routers/
+│           ├── __init__.py
+│           ├── auth.py           ← Login / Register
+│           ├── products.py       ← CRUD productos
+│           ├── clients.py        ← CRUD clientes
+│           └── invoices.py       ← CRUD facturas (maestro-detalle)
+│
+├── frontend/                     ← SPA JavaScript Vanilla
+├── nginx/
+│   └── nginx.conf                ← Reverse proxy</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 2 -->
+  <section class="module" id="paso2">
+    <div class="module-header">
+      <div class="module-num">02</div>
+      <div>
+        <h2 class="module-title">Configuración del Entorno de Desarrollo</h2>
+        <p class="module-subtitle">Requisitos, instalación y estructura de dependencias</p>
+      </div>
+    </div>
+
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-header"><span class="step-letter">A</span><span class="step-title">requirements.txt — Dependencias Python</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">text · backend/requirements.txt</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>fastapi==0.111.0
+uvicorn[standard]==0.29.0
+sqlalchemy==2.0.30
+psycopg2-binary==2.9.9
+pydantic[email]==2.7.1
+pydantic-settings==2.3.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.9
+Pillow==10.3.0
+websockets==12.0
+alembic==1.13.1
+python-dotenv==1.0.1</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-letter">B</span><span class="step-title">Crear entorno virtual e instalar dependencias</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">powershell · Windows 11</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code># Ir a la carpeta backend
+cd panaderia-digital\backend
+
+# Crear el entorno virtual
+python -m venv venv
+
+# Activar en PowerShell
+.\venv\Scripts\Activate.ps1
+
+# Si PowerShell bloquea la activación, ejecutar primero:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Instalar dependencias
+pip install --upgrade pip
+pip install -r requirements.txt</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-letter">C</span><span class="step-title">Solución: passlib + bcrypt incompatibilidad</span></div>
+        <div class="info-box warn">
+          <div class="ib-title">⚠ Error conocido en Windows: passlib + bcrypt</div>
+          <div class="ib-text">passlib 1.7.4 fue escrita antes de que bcrypt 4.x cambiara su API interna. Si aparece error de atributo, reinstalar versiones compatibles:</div>
+        </div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">powershell</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>pip uninstall bcrypt passlib -y
+pip install bcrypt==4.0.1 passlib==1.7.4</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 3 -->
+  <section class="module" id="paso3">
+    <div class="module-header">
+      <div class="module-num">03</div>
+      <div>
+        <h2 class="module-title">Modelo de Datos y Base de Datos PostgreSQL</h2>
+        <p class="module-subtitle">Diagrama ER y script DDL completo</p>
+      </div>
+    </div>
+
+    <div class="er-box">
+      <div class="er-box-title">Diagrama Entidad-Relación · Panadería Digital</div>
+      <div class="er-entities-pan">
+        <div class="er-ent">
+          <div class="er-ent-name">clientes</div>
+          <div class="er-attr pk">🔑 id SERIAL</div>
+          <div class="er-attr">tipo_documento ENUM</div>
+          <div class="er-attr">numero_documento UNIQUE</div>
+          <div class="er-attr">nombre VARCHAR(200)</div>
+          <div class="er-attr">correo UNIQUE</div>
+          <div class="er-attr">password_hash</div>
+          <div class="er-attr accent">rol ENUM(admin, user)</div>
+        </div>
+        <div class="er-rel">1:N ↓</div>
+        <div class="er-ent">
+          <div class="er-ent-name">facturas</div>
+          <div class="er-attr pk">🔑 id SERIAL</div>
+          <div class="er-attr">codigo_factura UNIQUE</div>
+          <div class="er-attr fk">🔗 cliente_id (FK)</div>
+          <div class="er-attr">subtotal, pct_iva, total</div>
+          <div class="er-attr accent">es_compra_digital BOOL</div>
+          <div class="er-attr">estado VARCHAR</div>
+        </div>
+        <div class="er-rel">N:M ↓</div>
+        <div class="er-ent er-mid">
+          <div class="er-ent-name">producto_factura</div>
+          <div class="er-attr fk">🔗 factura_id (FK)</div>
+          <div class="er-attr fk">🔗 producto_id (FK)</div>
+          <div class="er-attr">cantidad</div>
+          <div class="er-attr">precio_unitario</div>
+          <div class="er-attr">total_renglon</div>
+          <div class="er-attr pk-comp">UNIQUE(fac_id, prod_id)</div>
+        </div>
+        <div class="er-rel">N:1 ↑</div>
+        <div class="er-ent">
+          <div class="er-ent-name">productos</div>
+          <div class="er-attr pk">🔑 id SERIAL</div>
+          <div class="er-attr">codigo UNIQUE</div>
+          <div class="er-attr">nombre VARCHAR(200)</div>
+          <div class="er-attr">cantidad_stock INTEGER</div>
+          <div class="er-attr">precio NUMERIC(12,2)</div>
+          <div class="er-attr">foto_url, activo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-header"><span class="step-letter">SQL</span><span class="step-title">Script DDL completo (generado automáticamente por SQLAlchemy)</span></div>
+      <div class="code-block">
+        <div class="code-toolbar"><span class="code-lang">sql · PostgreSQL 15</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+        <pre><code>-- Tipos ENUM nativos de PostgreSQL
+CREATE TYPE tipo_documento AS ENUM ('CC','NIT','CE','PASAPORTE');
+CREATE TYPE tipo_cliente   AS ENUM ('persona','empresa');
+CREATE TYPE rol_usuario    AS ENUM ('admin','user');
+
+-- Tabla de clientes (también son usuarios del sistema)
+CREATE TABLE clientes (
+    id                SERIAL PRIMARY KEY,
+    tipo_documento    tipo_documento  NOT NULL,
+    numero_documento  VARCHAR(30)     NOT NULL UNIQUE,
+    nombre            VARCHAR(200)    NOT NULL,
+    tipo_cliente      tipo_cliente    NOT NULL DEFAULT 'persona',
+    direccion         VARCHAR(300)    NOT NULL,
+    municipio         VARCHAR(100)    NOT NULL,
+    departamento      VARCHAR(100)    NOT NULL,
+    celular           VARCHAR(20),
+    correo            VARCHAR(150)    NOT NULL UNIQUE,
+    password_hash     VARCHAR(255)    NOT NULL,
+    rol               rol_usuario     NOT NULL DEFAULT 'user',
+    activo            BOOLEAN         DEFAULT TRUE,
+    fecha_registro    TIMESTAMP       DEFAULT NOW()
+);
+
+-- Tabla de productos del catálogo
+CREATE TABLE productos (
+    id               SERIAL PRIMARY KEY,
+    codigo           VARCHAR(50)     NOT NULL UNIQUE,
+    nombre           VARCHAR(200)    NOT NULL,
+    cantidad_stock   INTEGER         NOT NULL DEFAULT 0,
+    precio           NUMERIC(12,2)   NOT NULL,
+    foto_url         VARCHAR(500),
+    activo           BOOLEAN         DEFAULT TRUE,
+    fecha_creacion   TIMESTAMP       DEFAULT NOW()
+);
+
+-- Tabla de facturas (cabecera)
+CREATE TABLE facturas (
+    id                  SERIAL PRIMARY KEY,
+    codigo_factura      VARCHAR(50)     NOT NULL UNIQUE,
+    fecha_creacion      TIMESTAMP       DEFAULT NOW(),
+    fecha_vencimiento   TIMESTAMP       NOT NULL,
+    nombre_panaderia    VARCHAR(200)    NOT NULL,
+    nit_panaderia       VARCHAR(50)     NOT NULL,
+    dir_panaderia       VARCHAR(300)    NOT NULL,
+    cliente_id          INTEGER         NOT NULL REFERENCES clientes(id),
+    subtotal            NUMERIC(14,2)   NOT NULL DEFAULT 0,
+    pct_iva             NUMERIC(5,2)    NOT NULL DEFAULT 19.00,
+    monto_iva           NUMERIC(14,2)   NOT NULL DEFAULT 0,
+    total               NUMERIC(14,2)   NOT NULL DEFAULT 0,
+    es_compra_digital   BOOLEAN         DEFAULT FALSE,
+    estado              VARCHAR(30)     DEFAULT 'pendiente'
+);
+
+-- Tabla de detalle factura (relación N:M entre facturas y productos)
+CREATE TABLE producto_factura (
+    id               SERIAL PRIMARY KEY,
+    factura_id       INTEGER         NOT NULL REFERENCES facturas(id) ON DELETE CASCADE,
+    producto_id      INTEGER         NOT NULL REFERENCES productos(id),
+    precio_unitario  NUMERIC(12,2)   NOT NULL,
+    cantidad         INTEGER         NOT NULL DEFAULT 1,
+    total_renglon    NUMERIC(14,2)   NOT NULL,
+    UNIQUE (factura_id, producto_id)
+);</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 4 -->
+  <section class="module" id="paso4">
+    <div class="module-header">
+      <div class="module-num">04</div>
+      <div>
+        <h2 class="module-title">Configuración FastAPI, Seguridad y Base de Datos</h2>
+        <p class="module-subtitle">Variables de entorno, conexión SQLAlchemy, JWT y dependencias</p>
+      </div>
+    </div>
+
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-header"><span class="step-letter">A</span><span class="step-title">.env — Variables de entorno</span></div>
+        <div class="info-box warn"><div class="ib-title">⚠ Nunca subir el .env a GitHub</div><div class="ib-text">Agregar .env al archivo .gitignore desde el inicio del proyecto. Usar .env.example como plantilla pública sin valores reales.</div></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">env · raíz del proyecto</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>POSTGRES_USER=panaderia_user
+POSTGRES_PASSWORD=PanSecret2024
+POSTGRES_DB=panaderia_db
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+
+SECRET_KEY=supersecretkey_panaderia_2024_change_in_production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+ADMIN_EMAIL=admin@panaderia.com
+ADMIN_PASSWORD=Admin2024!
+ADMIN_NOMBRE=Administrador Panaderia
+
+PANADERIA_NOMBRE=La Abuela Panadería
+PANADERIA_NIT=900123456-1
+PANADERIA_DIR=Calle 10 # 5-20, Medellín, Antioquia</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-letter">B</span><span class="step-title">database.py — Conexión SQLAlchemy + PostgreSQL</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/database.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    POSTGRES_USER:     str = 'panaderia_user'
+    POSTGRES_PASSWORD: str = 'PanSecret2024'
+    POSTGRES_DB:       str = 'panaderia_db'
+    POSTGRES_HOST:     str = 'localhost'
+    POSTGRES_PORT:     str = '5432'
+    SECRET_KEY:        str = 'change_me'
+    ALGORITHM:         str = 'HS256'
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ADMIN_EMAIL:       str = 'admin@panaderia.com'
+    ADMIN_PASSWORD:    str = 'Admin2024!'
+    ADMIN_NOMBRE:      str = 'Administrador'
+    PANADERIA_NOMBRE:  str = 'Panaderia Demo'
+    PANADERIA_NIT:     str = '000000000-0'
+    PANADERIA_DIR:     str = 'Dirección panadería'
+
+    class Config:
+        env_file = '.env'
+
+settings = Settings()
+
+DATABASE_URL = (
+    f'postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}'
+    f'@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}'
+)
+
+engine       = create_engine(DATABASE_URL, echo=True)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base         = declarative_base()
+
+def get_db():
+    '''Generador de sesión de base de datos (dependencia FastAPI)'''
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-letter">C</span><span class="step-title">security.py — JWT y Hash bcrypt</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/security.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from datetime import datetime, timedelta
+from typing import Optional
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from .database import settings
+
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+
+def hash_password(plain_password: str) -> str:
+    return pwd_context.hash(plain_password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (
+        expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    to_encode.update({'exp': expire})
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+def decode_access_token(token: str) -> Optional[dict]:
+    try:
+        return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    except JWTError:
+        return None</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-letter">D</span><span class="step-title">dependencies.py — Inyección de dependencias y RBAC</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/dependencies.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
+from . import models
+from .database import get_db
+from .security import decode_access_token
+
+security_scheme = HTTPBearer()
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security_scheme),
+    db: Session = Depends(get_db)
+) -> models.Cliente:
+    '''Extrae el usuario del token JWT Bearer'''
+    token   = credentials.credentials
+    payload = decode_access_token(token)
+    if not payload:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Token inválido o expirado',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
+    correo: str = payload.get('sub')
+    usuario = db.query(models.Cliente).filter(
+        models.Cliente.correo == correo,
+        models.Cliente.activo == True
+    ).first()
+    if not usuario:
+        raise HTTPException(status_code=401, detail='Usuario no encontrado')
+    return usuario
+
+def require_admin(
+    current_user: models.Cliente = Depends(get_current_user)
+) -> models.Cliente:
+    '''Verifica que el usuario tenga rol admin'''
+    if current_user.rol != 'admin':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Acceso denegado: se requiere rol administrador'
+        )
+    return current_user</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 5 -->
+  <section class="module" id="paso5">
+    <div class="module-header">
+      <div class="module-num">05</div>
+      <div>
+        <h2 class="module-title">Modelos SQLAlchemy y Schemas Pydantic</h2>
+        <p class="module-subtitle">ORM para las tablas y validación de datos de entrada/salida</p>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-header"><span class="step-letter">A</span><span class="step-title">models.py — Modelos ORM</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/models.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from sqlalchemy import (
+    Column, Integer, String, Numeric, Boolean,
+    DateTime, ForeignKey, UniqueConstraint, Enum as SAEnum
+)
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+from .database import Base
+import enum
+
+class TipoDocumento(str, enum.Enum):
+    CC = 'CC'; NIT = 'NIT'; CE = 'CE'; PASAPORTE = 'PASAPORTE'
+
+class TipoCliente(str, enum.Enum):
+    persona = 'persona'; empresa = 'empresa'
+
+class RolUsuario(str, enum.Enum):
+    admin = 'admin'; user = 'user'
+
+class Cliente(Base):
+    __tablename__ = 'clientes'
+    id               = Column(Integer, primary_key=True, index=True)
+    tipo_documento   = Column(SAEnum(TipoDocumento), nullable=False)
+    numero_documento = Column(String(30), unique=True, nullable=False)
+    nombre           = Column(String(200), nullable=False)
+    tipo_cliente     = Column(SAEnum(TipoCliente), default=TipoCliente.persona)
+    direccion        = Column(String(300), nullable=False)
+    municipio        = Column(String(100), nullable=False)
+    departamento     = Column(String(100), nullable=False)
+    celular          = Column(String(20))
+    correo           = Column(String(150), unique=True, nullable=False, index=True)
+    password_hash    = Column(String(255), nullable=False)
+    rol              = Column(SAEnum(RolUsuario), default=RolUsuario.user)
+    activo           = Column(Boolean, default=True)
+    fecha_registro   = Column(DateTime(timezone=True), server_default=func.now())
+    facturas         = relationship('Factura', back_populates='cliente')
+
+class Producto(Base):
+    __tablename__ = 'productos'
+    id             = Column(Integer, primary_key=True, index=True)
+    codigo         = Column(String(50), unique=True, nullable=False, index=True)
+    nombre         = Column(String(200), nullable=False)
+    cantidad_stock = Column(Integer, default=0)
+    precio         = Column(Numeric(12, 2), nullable=False)
+    foto_url       = Column(String(500))
+    activo         = Column(Boolean, default=True)
+    fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
+    lineas         = relationship('ProductoFactura', back_populates='producto')
+
+class Factura(Base):
+    __tablename__ = 'facturas'
+    id                = Column(Integer, primary_key=True, index=True)
+    codigo_factura    = Column(String(50), unique=True, nullable=False)
+    fecha_creacion    = Column(DateTime(timezone=True), server_default=func.now())
+    fecha_vencimiento = Column(DateTime(timezone=True), nullable=False)
+    nombre_panaderia  = Column(String(200), nullable=False)
+    nit_panaderia     = Column(String(50), nullable=False)
+    dir_panaderia     = Column(String(300), nullable=False)
+    cliente_id        = Column(Integer, ForeignKey('clientes.id'), nullable=False)
+    subtotal          = Column(Numeric(14, 2), default=0)
+    pct_iva           = Column(Numeric(5, 2), default=19.00)
+    monto_iva         = Column(Numeric(14, 2), default=0)
+    total             = Column(Numeric(14, 2), default=0)
+    es_compra_digital = Column(Boolean, default=False)
+    estado            = Column(String(30), default='pendiente')
+    cliente           = relationship('Cliente', back_populates='facturas')
+    lineas            = relationship('ProductoFactura', back_populates='factura',
+                                     cascade='all, delete-orphan')
+
+class ProductoFactura(Base):
+    __tablename__  = 'producto_factura'
+    __table_args__ = (UniqueConstraint('factura_id', 'producto_id'),)
+    id              = Column(Integer, primary_key=True, index=True)
+    factura_id      = Column(Integer, ForeignKey('facturas.id', ondelete='CASCADE'), nullable=False)
+    producto_id     = Column(Integer, ForeignKey('productos.id'), nullable=False)
+    precio_unitario = Column(Numeric(12, 2), nullable=False)
+    cantidad        = Column(Integer, nullable=False, default=1)
+    total_renglon   = Column(Numeric(14, 2), nullable=False)
+    factura         = relationship('Factura', back_populates='lineas')
+    producto        = relationship('Producto', back_populates='lineas')</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-letter">B</span><span class="step-title">schemas.py — Schemas Pydantic (validación)</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/schemas.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from pydantic import BaseModel, EmailStr, field_validator
+from typing import Optional, List
+from datetime import datetime
+from decimal import Decimal
+from .models import TipoDocumento, TipoCliente, RolUsuario
+
+# ── CLIENTE ────────────────────────────────────────────
+class ClienteBase(BaseModel):
+    tipo_documento:   TipoDocumento
+    numero_documento: str
+    nombre:           str
+    tipo_cliente:     TipoCliente = TipoCliente.persona
+    direccion:        str
+    municipio:        str
+    departamento:     str
+    celular:          Optional[str] = None
+    correo:           EmailStr
+
+class ClienteCreate(ClienteBase):
+    password: str
+    @field_validator('password')
+    @classmethod
+    def password_min_length(cls, v):
+        if len(v) < 8:
+            raise ValueError('La contraseña debe tener al menos 8 caracteres')
+        return v
+
+class ClienteUpdate(BaseModel):
+    nombre:       Optional[str]         = None
+    tipo_cliente: Optional[TipoCliente] = None
+    direccion:    Optional[str]         = None
+    municipio:    Optional[str]         = None
+    departamento: Optional[str]         = None
+    celular:      Optional[str]         = None
+
+class ClienteResponse(ClienteBase):
+    id:             int
+    rol:            RolUsuario
+    activo:         bool
+    fecha_registro: datetime
+    model_config = {'from_attributes': True}
+
+# ── TOKEN ──────────────────────────────────────────────
+class Token(BaseModel):
+    access_token: str
+    token_type:   str = 'bearer'
+    usuario:      ClienteResponse
+
+class LoginRequest(BaseModel):
+    correo:   EmailStr
+    password: str
+
+# ── PRODUCTO ───────────────────────────────────────────
+class ProductoBase(BaseModel):
+    codigo:         str
+    nombre:         str
+    cantidad_stock: int     = 0
+    precio:         Decimal
+    foto_url:       Optional[str] = None
+
+class ProductoCreate(ProductoBase): pass
+
+class ProductoUpdate(BaseModel):
+    nombre:         Optional[str]     = None
+    cantidad_stock: Optional[int]     = None
+    precio:         Optional[Decimal] = None
+    foto_url:       Optional[str]     = None
+    activo:         Optional[bool]    = None
+
+class ProductoResponse(ProductoBase):
+    id:             int
+    activo:         bool
+    fecha_creacion: datetime
+    model_config = {'from_attributes': True}
+
+# ── FACTURA ────────────────────────────────────────────
+class LineaFacturaCreate(BaseModel):
+    producto_id: int
+    cantidad:    int
+    @field_validator('cantidad')
+    @classmethod
+    def cantidad_positiva(cls, v):
+        if v <= 0:
+            raise ValueError('La cantidad debe ser mayor a 0')
+        return v
+
+class LineaFacturaResponse(BaseModel):
+    id:              int
+    producto_id:     int
+    producto:        ProductoResponse
+    precio_unitario: Decimal
+    cantidad:        int
+    total_renglon:   Decimal
+    model_config = {'from_attributes': True}
+
+class FacturaCreate(BaseModel):
+    cliente_id:        int
+    pct_iva:           Decimal = Decimal('19.00')
+    es_compra_digital: bool    = False
+    lineas:            List[LineaFacturaCreate]
+    @field_validator('lineas')
+    @classmethod
+    def al_menos_una_linea(cls, v):
+        if not v:
+            raise ValueError('La factura debe tener al menos un producto')
+        return v
+
+class FacturaResponse(BaseModel):
+    id:                int
+    codigo_factura:    str
+    fecha_creacion:    datetime
+    fecha_vencimiento: datetime
+    nombre_panaderia:  str
+    nit_panaderia:     str
+    dir_panaderia:     str
+    cliente_id:        int
+    cliente:           ClienteResponse
+    subtotal:          Decimal
+    pct_iva:           Decimal
+    monto_iva:         Decimal
+    total:             Decimal
+    es_compra_digital: bool
+    estado:            str
+    lineas:            List[LineaFacturaResponse]
+    model_config = {'from_attributes': True}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 6 -->
+  <section class="module" id="paso6">
+    <div class="module-header">
+      <div class="module-num">06</div>
+      <div>
+        <h2 class="module-title">Endpoints: Autenticación</h2>
+        <p class="module-subtitle">Login, registro y manejo de JWT</p>
+      </div>
+    </div>
+
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-header"><span class="step-letter">A</span><span class="step-title">routers/auth.py</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/routers/auth.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from ..database import get_db
+from .. import models, schemas
+from ..security import hash_password, verify_password, create_access_token
+
+router = APIRouter(prefix='/auth', tags=['Autenticación'])
+
+@router.post('/register', response_model=schemas.ClienteResponse,
+             status_code=status.HTTP_201_CREATED)
+def registrar_usuario(cliente_in: schemas.ClienteCreate, db: Session = Depends(get_db)):
+    '''Registra un nuevo cliente con rol user por defecto'''
+    if db.query(models.Cliente).filter(models.Cliente.correo == cliente_in.correo).first():
+        raise HTTPException(status_code=400,
+            detail=f'El correo {cliente_in.correo} ya está registrado')
+    if db.query(models.Cliente).filter(
+        models.Cliente.numero_documento == cliente_in.numero_documento).first():
+        raise HTTPException(status_code=400, detail='Número de documento ya registrado')
+
+    nuevo = models.Cliente(
+        tipo_documento   = cliente_in.tipo_documento,
+        numero_documento = cliente_in.numero_documento,
+        nombre           = cliente_in.nombre,
+        tipo_cliente     = cliente_in.tipo_cliente,
+        direccion        = cliente_in.direccion,
+        municipio        = cliente_in.municipio,
+        departamento     = cliente_in.departamento,
+        celular          = cliente_in.celular,
+        correo           = cliente_in.correo,
+        password_hash    = hash_password(cliente_in.password),
+        rol              = models.RolUsuario.user
+    )
+    db.add(nuevo); db.commit(); db.refresh(nuevo)
+    return nuevo
+
+@router.post('/login', response_model=schemas.Token)
+def iniciar_sesion(login: schemas.LoginRequest, db: Session = Depends(get_db)):
+    '''Autentica usuario y retorna JWT token + datos del usuario'''
+    usuario = db.query(models.Cliente).filter(
+        models.Cliente.correo == login.correo,
+        models.Cliente.activo == True
+    ).first()
+    if not usuario or not verify_password(login.password, usuario.password_hash):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='Correo o contraseña incorrectos')
+    token = create_access_token(data={'sub': usuario.correo, 'rol': usuario.rol})
+    return schemas.Token(access_token=token, usuario=usuario)</code></pre>
+        </div>
+      </div>
+
+      <div class="routes-table">
+        <div class="rt-title">Endpoints de Autenticación</div>
+        <div class="rt-row header">
+          <div>Método</div><div>Ruta</div><div>Descripción</div><div>Auth</div>
+        </div>
+        <div class="rt-row"><div class="badge-post">POST</div><div>/api/auth/register</div><div>Registrar nuevo cliente (rol: user)</div><div>—</div></div>
+        <div class="rt-row"><div class="badge-post">POST</div><div>/api/auth/login</div><div>Login → retorna JWT token + usuario</div><div>—</div></div>
+      </div>
+
+      <div class="step challenge-step">
+        <div class="step-header"><span class="step-letter">🧪</span><span class="step-title">JSON de prueba — Login admin</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">json · POST /api/auth/login</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>{
+  "correo": "admin@panaderia.com",
+  "password": "Admin2024!"
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 7 -->
+  <section class="module" id="paso7">
+    <div class="module-header">
+      <div class="module-num">07</div>
+      <div>
+        <h2 class="module-title">Endpoints: Productos (CRUD Completo)</h2>
+        <p class="module-subtitle">Gestión del catálogo con subida de fotos</p>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-header"><span class="step-letter">A</span><span class="step-title">routers/products.py</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/routers/products.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
+from sqlalchemy.orm import Session
+from typing import List, Optional
+import uuid, os, shutil
+from ..database import get_db
+from .. import models, schemas
+from ..dependencies import get_current_user, require_admin
+
+router     = APIRouter(prefix='/products', tags=['Productos'])
+UPLOAD_DIR = '/app/uploads/products'
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+@router.get('/', response_model=List[schemas.ProductoResponse])
+def listar_productos(skip: int = 0, limit: int = 50,
+                     activo: Optional[bool] = True,
+                     db: Session = Depends(get_db), _=Depends(get_current_user)):
+    q = db.query(models.Producto)
+    if activo is not None:
+        q = q.filter(models.Producto.activo == activo)
+    return q.offset(skip).limit(limit).all()
+
+@router.get('/{producto_id}', response_model=schemas.ProductoResponse)
+def obtener_producto(producto_id: int, db: Session = Depends(get_db),
+                     _=Depends(get_current_user)):
+    producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
+    if not producto:
+        raise HTTPException(status_code=404, detail='Producto no encontrado')
+    return producto
+
+@router.post('/', response_model=schemas.ProductoResponse,
+             status_code=status.HTTP_201_CREATED)
+def crear_producto(producto_in: schemas.ProductoCreate, db: Session = Depends(get_db),
+                   admin=Depends(require_admin)):
+    if db.query(models.Producto).filter(models.Producto.codigo == producto_in.codigo).first():
+        raise HTTPException(status_code=400, detail='Código de producto ya existe')
+    nuevo = models.Producto(**producto_in.model_dump())
+    db.add(nuevo); db.commit(); db.refresh(nuevo)
+    return nuevo
+
+@router.put('/{producto_id}', response_model=schemas.ProductoResponse)
+def actualizar_producto(producto_id: int, producto_in: schemas.ProductoUpdate,
+                        db: Session = Depends(get_db), admin=Depends(require_admin)):
+    producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
+    if not producto:
+        raise HTTPException(status_code=404, detail='Producto no encontrado')
+    for field, value in producto_in.model_dump(exclude_unset=True).items():
+        setattr(producto, field, value)
+    db.commit(); db.refresh(producto)
+    return producto
+
+@router.delete('/{producto_id}', status_code=status.HTTP_204_NO_CONTENT)
+def eliminar_producto(producto_id: int, db: Session = Depends(get_db),
+                      admin=Depends(require_admin)):
+    producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
+    if not producto:
+        raise HTTPException(status_code=404, detail='Producto no encontrado')
+    producto.activo = False  # Soft delete
+    db.commit()
+
+@router.post('/{producto_id}/upload-photo')
+async def subir_foto(producto_id: int, file: UploadFile = File(...),
+                     db: Session = Depends(get_db), admin=Depends(require_admin)):
+    producto = db.query(models.Producto).filter(models.Producto.id == producto_id).first()
+    if not producto:
+        raise HTTPException(status_code=404, detail='Producto no encontrado')
+    if file.content_type not in ['image/jpeg', 'image/png', 'image/webp']:
+        raise HTTPException(status_code=400, detail='Solo imágenes JPG, PNG o WebP')
+    ext      = file.filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+    filepath = os.path.join(UPLOAD_DIR, filename)
+    with open(filepath, 'wb') as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    producto.foto_url = f'/uploads/products/{filename}'
+    db.commit()
+    return {'foto_url': producto.foto_url}</code></pre>
+        </div>
+      </div>
+
+      <div class="routes-table">
+        <div class="rt-title">Endpoints de Productos</div>
+        <div class="rt-row header"><div>Método</div><div>Ruta</div><div>Descripción</div><div>Rol</div></div>
+        <div class="rt-row"><div class="badge-get">GET</div><div>/api/products</div><div>Listar productos (paginado)</div><div>Todos</div></div>
+        <div class="rt-row"><div class="badge-get">GET</div><div>/api/products/{id}</div><div>Obtener producto por ID</div><div>Todos</div></div>
+        <div class="rt-row"><div class="badge-post">POST</div><div>/api/products</div><div>Crear producto</div><div>admin</div></div>
+        <div class="rt-row"><div class="badge-put">PUT</div><div>/api/products/{id}</div><div>Actualizar producto</div><div>admin</div></div>
+        <div class="rt-row"><div class="badge-del">DELETE</div><div>/api/products/{id}</div><div>Desactivar (soft delete)</div><div>admin</div></div>
+        <div class="rt-row"><div class="badge-post">POST</div><div>/api/products/{id}/upload-photo</div><div>Subir foto (multipart)</div><div>admin</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 8 -->
+  <section class="module" id="paso8">
+    <div class="module-header">
+      <div class="module-num">08</div>
+      <div>
+        <h2 class="module-title">Endpoints: Clientes (CRUD Completo)</h2>
+        <p class="module-subtitle">Gestión de clientes con control de acceso por rol</p>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-header"><span class="step-letter">A</span><span class="step-title">routers/clients.py</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/routers/clients.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+from ..database import get_db
+from .. import models, schemas
+from ..dependencies import get_current_user, require_admin
+
+router = APIRouter(prefix='/clients', tags=['Clientes'])
+
+@router.get('/', response_model=List[schemas.ClienteResponse])
+def listar_clientes(skip: int = 0, limit: int = 50,
+                    db: Session = Depends(get_db), admin=Depends(require_admin)):
+    '''Lista todos los clientes. Solo admin.'''
+    return db.query(models.Cliente).filter(
+        models.Cliente.activo == True).offset(skip).limit(limit).all()
+
+@router.get('/me', response_model=schemas.ClienteResponse)
+def mi_perfil(current_user=Depends(get_current_user)):
+    '''Retorna el perfil del usuario autenticado'''
+    return current_user
+
+@router.get('/{cliente_id}', response_model=schemas.ClienteResponse)
+def obtener_cliente(cliente_id: int, db: Session = Depends(get_db),
+                    current_user=Depends(get_current_user)):
+    '''Admin puede ver cualquier cliente; user solo el suyo'''
+    if current_user.rol != 'admin' and current_user.id != cliente_id:
+        raise HTTPException(status_code=403, detail='Acceso denegado')
+    cliente = db.query(models.Cliente).filter(
+        models.Cliente.id == cliente_id, models.Cliente.activo == True).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail='Cliente no encontrado')
+    return cliente
+
+@router.put('/{cliente_id}', response_model=schemas.ClienteResponse)
+def actualizar_cliente(cliente_id: int, cliente_in: schemas.ClienteUpdate,
+                       db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    '''Admin actualiza cualquier cliente; user solo el suyo'''
+    if current_user.rol != 'admin' and current_user.id != cliente_id:
+        raise HTTPException(status_code=403, detail='Acceso denegado')
+    cliente = db.query(models.Cliente).filter(models.Cliente.id == cliente_id).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail='Cliente no encontrado')
+    for field, value in cliente_in.model_dump(exclude_unset=True).items():
+        setattr(cliente, field, value)
+    db.commit(); db.refresh(cliente)
+    return cliente
+
+@router.delete('/{cliente_id}', status_code=status.HTTP_204_NO_CONTENT)
+def desactivar_cliente(cliente_id: int, db: Session = Depends(get_db),
+                       admin=Depends(require_admin)):
+    '''Desactiva cliente (soft delete). Solo admin.'''
+    cliente = db.query(models.Cliente).filter(models.Cliente.id == cliente_id).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail='Cliente no encontrado')
+    if cliente.rol == 'admin':
+        raise HTTPException(status_code=400, detail='No se puede desactivar un admin')
+    cliente.activo = False
+    db.commit()</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 9 -->
+  <section class="module" id="paso9">
+    <div class="module-header">
+      <div class="module-num">09</div>
+      <div>
+        <h2 class="module-title">Endpoints: Facturas y Detalle (Maestro-Detalle)</h2>
+        <p class="module-subtitle">Facturación con cálculo automático, descuento de stock y validaciones</p>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-header"><span class="step-letter">A</span><span class="step-title">routers/invoices.py</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/routers/invoices.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+from datetime import datetime, timedelta
+from decimal import Decimal
+import uuid
+from ..database import get_db, settings
+from .. import models, schemas
+from ..dependencies import get_current_user, require_admin
+from ..notifications import manager
+
+router = APIRouter(prefix='/invoices', tags=['Facturas'])
+
+def generar_codigo() -> str:
+    hoy = datetime.now().strftime('%Y%m%d')
+    return f'FAC-{hoy}-{str(uuid.uuid4())[:4].upper()}'
+
+@router.post('/', response_model=schemas.FacturaResponse,
+             status_code=status.HTTP_201_CREATED)
+async def crear_factura(factura_in: schemas.FacturaCreate,
+                        db: Session = Depends(get_db),
+                        current_user=Depends(get_current_user)):
+    # Control de acceso: user solo puede crear para sí mismo
+    if current_user.rol != 'admin' and current_user.id != factura_in.cliente_id:
+        raise HTTPException(status_code=403, detail='No puede crear facturas para otro cliente')
+
+    cliente = db.query(models.Cliente).filter(
+        models.Cliente.id == factura_in.cliente_id, models.Cliente.activo == True).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail='Cliente no encontrado')
+
+    # Calcular totales y validar stock
+    subtotal    = Decimal('0')
+    lineas_data = []
+    for linea in factura_in.lineas:
+        producto = db.query(models.Producto).filter(
+            models.Producto.id == linea.producto_id, models.Producto.activo == True).first()
+        if not producto:
+            raise HTTPException(status_code=404,
+                detail=f'Producto id={linea.producto_id} no encontrado')
+        if producto.cantidad_stock < linea.cantidad:
+            raise HTTPException(status_code=400,
+                detail=f'Stock insuficiente para {producto.nombre}. '
+                       f'Disponible: {producto.cantidad_stock}')
+        total_renglon = Decimal(str(producto.precio)) * linea.cantidad
+        subtotal += total_renglon
+        lineas_data.append({'producto': producto, 'cantidad': linea.cantidad,
+                            'precio_unitario': producto.precio,
+                            'total_renglon': total_renglon})
+
+    pct_iva   = factura_in.pct_iva
+    monto_iva = subtotal * (pct_iva / 100)
+    total     = subtotal + monto_iva
+
+    factura = models.Factura(
+        codigo_factura    = generar_codigo(),
+        fecha_vencimiento = datetime.utcnow() + timedelta(days=15),
+        nombre_panaderia  = settings.PANADERIA_NOMBRE,
+        nit_panaderia     = settings.PANADERIA_NIT,
+        dir_panaderia     = settings.PANADERIA_DIR,
+        cliente_id        = factura_in.cliente_id,
+        subtotal          = subtotal, pct_iva=pct_iva,
+        monto_iva         = monto_iva, total=total,
+        es_compra_digital = factura_in.es_compra_digital,
+        estado            = 'pendiente'
+    )
+    db.add(factura); db.flush()
+
+    for ld in lineas_data:
+        db.add(models.ProductoFactura(
+            factura_id      = factura.id,
+            producto_id     = ld['producto'].id,
+            precio_unitario = ld['precio_unitario'],
+            cantidad        = ld['cantidad'],
+            total_renglon   = ld['total_renglon']
+        ))
+        ld['producto'].cantidad_stock -= ld['cantidad']
+
+    db.commit(); db.refresh(factura)
+
+    # Notificación WebSocket si es compra digital
+    if factura.es_compra_digital:
+        await manager.broadcast({
+            'tipo': 'nueva_compra_digital',
+            'factura_id': factura.id,
+            'codigo': factura.codigo_factura,
+            'cliente': cliente.nombre,
+            'total': float(factura.total),
+            'timestamp': datetime.utcnow().isoformat()
+        })
+    return factura
+
+@router.get('/', response_model=List[schemas.FacturaResponse])
+def listar_facturas(skip: int = 0, limit: int = 50,
+                    db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    '''Admin ve todas; user solo las suyas'''
+    q = db.query(models.Factura)
+    if current_user.rol != 'admin':
+        q = q.filter(models.Factura.cliente_id == current_user.id)
+    return q.order_by(models.Factura.fecha_creacion.desc()).offset(skip).limit(limit).all()
+
+@router.get('/{factura_id}', response_model=schemas.FacturaResponse)
+def obtener_factura(factura_id: int, db: Session = Depends(get_db),
+                    current_user=Depends(get_current_user)):
+    factura = db.query(models.Factura).filter(models.Factura.id == factura_id).first()
+    if not factura:
+        raise HTTPException(status_code=404, detail='Factura no encontrada')
+    if current_user.rol != 'admin' and factura.cliente_id != current_user.id:
+        raise HTTPException(status_code=403, detail='Acceso denegado')
+    return factura
+
+@router.patch('/{factura_id}/status')
+def cambiar_estado(factura_id: int, estado: str,
+                   db: Session = Depends(get_db), admin=Depends(require_admin)):
+    estados_validos = {'pendiente', 'procesando', 'enviado', 'entregado', 'cancelado'}
+    if estado not in estados_validos:
+        raise HTTPException(status_code=400,
+            detail=f'Estado inválido. Opciones: {estados_validos}')
+    factura = db.query(models.Factura).filter(models.Factura.id == factura_id).first()
+    if not factura:
+        raise HTTPException(status_code=404, detail='Factura no encontrada')
+    factura.estado = estado; db.commit()
+    return {'mensaje': f'Estado actualizado a {estado}', 'factura_id': factura_id}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 10 -->
+  <section class="module" id="paso10">
+    <div class="module-header">
+      <div class="module-num">10</div>
+      <div>
+        <h2 class="module-title">WebSocket y main.py</h2>
+        <p class="module-subtitle">Notificaciones en tiempo real y punto de entrada de la aplicación</p>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-header"><span class="step-letter">A</span><span class="step-title">notifications.py — Gestor de conexiones WebSocket</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/notifications.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from fastapi import WebSocket
+from typing import List
+import json
+
+class ConnectionManager:
+    '''Gestiona conexiones WebSocket activas de administradores'''
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        '''Envía mensaje JSON a todas las conexiones activas'''
+        data = json.dumps(message, ensure_ascii=False)
+        for connection in self.active_connections.copy():
+            try:
+                await connection.send_text(data)
+            except Exception:
+                self.disconnect(connection)  # Eliminar conexiones muertas
+
+manager = ConnectionManager()</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-letter">B</span><span class="step-title">main.py — Punto de entrada FastAPI</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">python · backend/app/main.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from sqlalchemy.orm import Session
+import os
+from .database import engine, get_db, settings, Base
+from . import models
+from .security import hash_password
+from .notifications import manager
+from .routers import auth, products, clients, invoices
+
+# Crear tablas al iniciar (en producción usar Alembic)
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title       = 'Panadería Digital API',
+    version     = '1.0.0',
+    description = 'Sistema de facturación para panadería artesanal'
+)
+
+# CORS: permitir peticiones del frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins     = ['*'],  # En producción: ['https://tu-dominio.com']
+    allow_credentials = True,
+    allow_methods     = ['*'],
+    allow_headers     = ['*'],
+)
+
+# Archivos estáticos (fotos de productos)
+os.makedirs('/app/uploads/products', exist_ok=True)
+app.mount('/uploads', StaticFiles(directory='/app/uploads'), name='uploads')
+
+# Registrar routers
+app.include_router(auth.router,     prefix='/api')
+app.include_router(products.router, prefix='/api')
+app.include_router(clients.router,  prefix='/api')
+app.include_router(invoices.router, prefix='/api')
+
+# Startup: crear admin por defecto si no existe
+@app.on_event('startup')
+def crear_admin_por_defecto():
+    db: Session = next(get_db())
+    try:
+        if not db.query(models.Cliente).filter(
+            models.Cliente.correo == settings.ADMIN_EMAIL).first():
+            db.add(models.Cliente(
+                tipo_documento   = models.TipoDocumento.NIT,
+                numero_documento = '000000000',
+                nombre           = settings.ADMIN_NOMBRE,
+                tipo_cliente     = models.TipoCliente.empresa,
+                direccion        = 'Sede Principal',
+                municipio        = 'Medellín',
+                departamento     = 'Antioquia',
+                correo           = settings.ADMIN_EMAIL,
+                password_hash    = hash_password(settings.ADMIN_PASSWORD),
+                rol              = models.RolUsuario.admin
+            ))
+            db.commit()
+            print(f'✅ Admin creado: {settings.ADMIN_EMAIL}')
+    finally:
+        db.close()
+
+# WebSocket para notificaciones en tiempo real
+@app.websocket('/ws/notifications')
+async def websocket_notifications(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            await websocket.receive_text()  # Mantener conexión viva
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
+# Health check
+@app.get('/api/health')
+def health_check():
+    return {'status': 'ok', 'app': 'Panadería Digital API v1.0'}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 11 -->
+  <section class="module" id="paso11">
+    <div class="module-header">
+      <div class="module-num">11</div>
+      <div>
+        <h2 class="module-title">Arrancar el Backend y Pruebas con Swagger UI</h2>
+        <p class="module-subtitle">Verificación completa de todos los endpoints</p>
+      </div>
+    </div>
+
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-header"><span class="step-letter">A</span><span class="step-title">Arrancar el servidor uvicorn</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">powershell · Windows 11</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>cd panaderia-digital\backend
+.\venv\Scripts\Activate.ps1
+
+# Arrancar en puerto 8000
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Si el puerto 8000 está ocupado:
+uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+
+# Señales de que va bien:
+# ✅ Admin creado: admin@panaderia.com
+# INFO: Uvicorn running on http://0.0.0.0:8000
+# INFO: Application startup complete.</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-letter">B</span><span class="step-title">Swagger UI — Documentación interactiva</span></div>
+        <div class="info-box info">
+          <div class="ib-title">📖 Documentación automática de FastAPI</div>
+          <div class="ib-text">Abrir en el navegador: <strong>http://localhost:8000/docs</strong> (Swagger UI) o <strong>http://localhost:8000/redoc</strong> (ReDoc). Para usar endpoints protegidos: clic en <strong>Authorize 🔒</strong> y pegar el token como: <code>Bearer eyJhbGci...</code></div>
+        </div>
+      </div>
+
+      <div class="step challenge-step">
+        <div class="step-header"><span class="step-letter">🧪</span><span class="step-title">Secuencia de pruebas completa</span></div>
+        <div class="code-block">
+          <div class="code-toolbar"><span class="code-lang">json · Prueba 1 — Login admin</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>POST /api/auth/login
+{
+  "correo": "admin@panaderia.com",
+  "password": "Admin2024!"
+}
+// ✅ Esperado: 200 OK con access_token</code></pre>
+        </div>
+        <div class="code-block" style="margin-top:12px">
+          <div class="code-toolbar"><span class="code-lang">json · Prueba 2 — Crear producto</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>POST /api/products  (requiere token admin en Authorize)
+{
+  "codigo": "PAN-001",
+  "nombre": "Pan de chocolate",
+  "cantidad_stock": 50,
+  "precio": 3500
+}
+// ✅ Esperado: 201 Created</code></pre>
+        </div>
+        <div class="code-block" style="margin-top:12px">
+          <div class="code-toolbar"><span class="code-lang">json · Prueba 3 — Crear factura con detalle</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
+          <pre><code>POST /api/invoices
+{
+  "cliente_id": 1,
+  "pct_iva": 19,
+  "es_compra_digital": false,
+  "lineas": [
+    {"producto_id": 1, "cantidad": 3},
+    {"producto_id": 2, "cantidad": 1}
+  ]
+}
+// ✅ Esperado: 201 Created con subtotal, IVA y total calculados</code></pre>
+        </div>
+      </div>
+
+      <div class="credentials-box">
+        <div class="cb-title">🔑 Credenciales por defecto del admin</div>
+        <div class="cb-grid">
+          <div class="cb-row"><span class="cb-label">Correo</span><span class="cb-value">admin@panaderia.com</span></div>
+          <div class="cb-row"><span class="cb-label">Contraseña</span><span class="cb-value">Admin2024!</span></div>
+          <div class="cb-row"><span class="cb-label">Rol</span><span class="cb-value">admin</span></div>
+        </div>
+        <div class="cb-warn">⚠ Cambiar siempre en producción: SECRET_KEY, contraseña del admin y todas las variables del .env</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUMEN RUTAS -->
+  <section class="module" id="resumen">
+    <div class="module-header">
+      <div class="module-num">◎</div>
+      <div>
+        <h2 class="module-title">Resumen de Rutas de la API</h2>
+        <p class="module-subtitle">Referencia rápida de todos los endpoints</p>
+      </div>
+    </div>
+
+    <div class="routes-table big">
+      <div class="rt-row header"><div>Método</div><div>Ruta</div><div>Descripción</div><div>Rol mínimo</div></div>
+      <div class="rt-row"><div class="badge-post">POST</div><div>/api/auth/register</div><div>Registrar nuevo cliente</div><div>—</div></div>
+      <div class="rt-row"><div class="badge-post">POST</div><div>/api/auth/login</div><div>Login → JWT token</div><div>—</div></div>
+      <div class="rt-row"><div class="badge-get">GET</div><div>/api/products</div><div>Listar productos</div><div>user</div></div>
+      <div class="rt-row"><div class="badge-get">GET</div><div>/api/products/{id}</div><div>Detalle de producto</div><div>user</div></div>
+      <div class="rt-row"><div class="badge-post">POST</div><div>/api/products</div><div>Crear producto</div><div>admin</div></div>
+      <div class="rt-row"><div class="badge-put">PUT</div><div>/api/products/{id}</div><div>Actualizar producto</div><div>admin</div></div>
+      <div class="rt-row"><div class="badge-del">DELETE</div><div>/api/products/{id}</div><div>Desactivar producto</div><div>admin</div></div>
+      <div class="rt-row"><div class="badge-post">POST</div><div>/api/products/{id}/upload-photo</div><div>Subir foto</div><div>admin</div></div>
+      <div class="rt-row"><div class="badge-get">GET</div><div>/api/clients</div><div>Listar clientes</div><div>admin</div></div>
+      <div class="rt-row"><div class="badge-get">GET</div><div>/api/clients/me</div><div>Mi perfil</div><div>user</div></div>
+      <div class="rt-row"><div class="badge-get">GET</div><div>/api/clients/{id}</div><div>Detalle cliente</div><div>user*</div></div>
+      <div class="rt-row"><div class="badge-put">PUT</div><div>/api/clients/{id}</div><div>Actualizar cliente</div><div>user*</div></div>
+      <div class="rt-row"><div class="badge-del">DELETE</div><div>/api/clients/{id}</div><div>Desactivar cliente</div><div>admin</div></div>
+      <div class="rt-row"><div class="badge-get">GET</div><div>/api/invoices</div><div>Listar facturas</div><div>user**</div></div>
+      <div class="rt-row"><div class="badge-post">POST</div><div>/api/invoices</div><div>Crear factura + detalle</div><div>user</div></div>
+      <div class="rt-row"><div class="badge-get">GET</div><div>/api/invoices/{id}</div><div>Ver factura completa</div><div>user**</div></div>
+      <div class="rt-row"><div class="badge-patch">PATCH</div><div>/api/invoices/{id}/status</div><div>Cambiar estado</div><div>admin</div></div>
+      <div class="rt-row"><div class="badge-get">WS</div><div>/ws/notifications</div><div>WebSocket notificaciones</div><div>admin</div></div>
+      <div class="rt-row"><div class="badge-get">GET</div><div>/api/health</div><div>Health check</div><div>—</div></div>
+    </div>
+
+    <div class="info-box info" style="margin-top:20px">
+      <div class="ib-title">* Control de acceso mixto</div>
+      <div class="ib-text">user* = el usuario solo puede ver/editar su propio registro. user** = el usuario solo ve sus propias facturas. El admin tiene visibilidad total.</div>
+    </div>
+
+    <div class="flow-box">
+      <div class="flow-title">Flujo de Compra Digital (Cliente → Admin)</div>
+      <div class="flow-steps">
+        <div class="flow-step">1. Cliente se registra en <code>/api/auth/register</code></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">2. Cliente hace login → recibe JWT token</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">3. Cliente consulta <code>GET /api/products</code></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">4. Cliente crea factura con <code>es_compra_digital=true</code></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">5. Backend descuenta stock, guarda factura, envía broadcast WebSocket</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">6. Admin recibe notificación en tiempo real: "Nueva compra digital"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">7. Admin cambia estado: pendiente → procesando → enviado → entregado</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">8. Cliente consulta <code>GET /api/invoices</code> y ve el estado actualizado</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div>
+        <div class="footer-brand">Panadería Digital · Backend FastAPI</div>
+        <div class="footer-sub">© <span id="footer-year"></span> Ing. Luis Eladio Porras Camargo · SENA ADSO 228118 · CC BY-NC-ND 4.0</div>
+      </div>
+      <div class="footer-tags">
+        <span>FastAPI 0.111</span>
+        <span>SQLAlchemy 2.0</span>
+        <span>PostgreSQL 15</span>
+        <span>JWT · bcrypt</span>
+        <span>WebSocket</span>
+      </div>
+    </div>
+  </footer>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>
