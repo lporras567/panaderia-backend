@@ -1287,8 +1287,7 @@ def cambiar_estado(factura_id: int, estado: str,
 
 
 
-  <!-- PASO 10 -->
-  <section class="module" id="paso10">
+<section class="module" id="paso10">
     <div class="module-header">
       <div class="module-num">10</div>
       <div>
@@ -1299,6 +1298,14 @@ def cambiar_estado(factura_id: int, estado: str,
     <div class="steps-wrap">
       <div class="step">
         <div class="step-header"><span class="step-letter">A</span><span class="step-title">notifications.py — Gestor de conexiones WebSocket</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Protocolo Full-Duplex y Broadcasting</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            A diferencia del protocolo HTTP tradicional (Petición-Respuesta), <strong>WebSockets</strong> permite una comunicación bidireccional y persistente. El <code>ConnectionManager</code> implementa el patrón <strong>Observer</strong>: mantiene una lista de clientes activos y utiliza la técnica de <strong>Broadcasting</strong> para enviar mensajes instantáneos sin que el cliente los solicite, ideal para alertas de nuevas ventas en el panel administrativo.
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/notifications.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from fastapi import WebSocket
@@ -1332,6 +1339,18 @@ manager = ConnectionManager()</code></pre>
 
       <div class="step">
         <div class="step-header"><span class="step-letter">B</span><span class="step-title">main.py — Punto de entrada FastAPI</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: El Corazón de la Aplicación (Bootstrap)</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            El archivo <code>main.py</code> es el encargado de la <strong>orquestación</strong>. Sus funciones principales son: 
+            1. <strong>Inicialización del ORM:</strong> Crea las tablas físicas en Postgres. 
+            2. <strong>Middleware CORS:</strong> Configura la seguridad para permitir que el frontend se comunique con la API. 
+            3. <strong>Enrutamiento (Routing):</strong> Unifica los submódulos (auth, products, etc.) bajo un prefijo común. 
+            4. <strong>Eventos de Ciclo de Vida:</strong> Ejecuta tareas críticas al arrancar, como la creación automática de la cuenta de administrador.
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/main.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -1415,6 +1434,7 @@ def health_check():
       </div>
     </div>
   </section>
+
 
   <!-- PASO 11 -->
   <section class="module" id="paso11">
