@@ -290,6 +290,8 @@ pip install bcrypt==4.0.1 passlib==1.7.4</code></pre>
     <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border);">
       <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 10px;">💡 Fundamento: El Modelo Relacional y Normalización</span>
       <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+        Para el Paso 3, los fundamentos teóricos deben centrarse en el Diseño Relacional, la Integridad Referencial y la Optimización de Tipos de Datos. Este es el momento donde el aprendiz entiende cómo la lógica de negocio de la panadería se convierte en una estructura rígida y segura.
+      <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
         El diseño se basa en la <strong>integridad referencial</strong>, utilizando Llaves Primarias (PK) para identificar registros únicos y Llaves Foráneas (FK) para establecer vínculos lógicos. Implementamos una relación <strong>N:M (Muchos a Muchos)</strong> entre Productos y Facturas mediante la tabla intermedia <code>producto_factura</code>, permitiendo que una factura contenga múltiples productos y un producto aparezca en múltiples facturas sin redundancia de datos.
       </p>
     </div>
@@ -418,6 +420,9 @@ CREATE TABLE producto_factura (
     </div>
   </section>
 
+
+
+
 <section class="module" id="paso4">
     <div class="module-header">
       <div class="module-num">04</div>
@@ -433,6 +438,8 @@ CREATE TABLE producto_factura (
         
         <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
           <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Desacoplamiento de Configuración</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Para el Paso 4, los fundamentos teóricos se centran en la Seguridad de la Información, la Gestión de Configuración y el Control de Acceso Basado en Roles (RBAC). Este módulo es crítico porque establece las capas de protección de la Panadería Digital.
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             El uso de archivos <code>.env</code> permite separar el código fuente de los datos sensibles (credenciales, llaves secretas). Esto facilita la portabilidad entre entornos de desarrollo, pruebas y producción sin modificar la lógica del backend.
           </p>
@@ -618,6 +625,9 @@ def require_admin(
     </div>
   </section>
 
+
+
+
 <section class="module" id="paso5">
     <div class="module-header">
       <div class="module-num">05</div>
@@ -633,6 +643,8 @@ def require_admin(
 
         <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
           <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Mapeo Objeto-Relacional (ORM)</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Para el Paso 5, los fundamentos teóricos se centran en la Capa de Persistencia y la Validación de Esquemas de Datos. Es fundamental explicar la separación de responsabilidades: mientras SQLAlchemy se encarga de cómo viven los datos en el disco, Pydantic se encarga de cómo entran y salen de la API.
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             El ORM actúa como un puente que permite manipular la base de datos PostgreSQL utilizando clases de Python. Aquí definimos la <strong>estructura física</strong>: tipos de datos, llaves primarias, foráneas y relaciones de carga (<code>relationship</code>). Esto abstrae el lenguaje SQL y protege la aplicación mediante el uso de parámetros seguros en las consultas.
           </p>
@@ -865,6 +877,8 @@ class FacturaResponse(BaseModel):
   </section>
 
 
+
+
 <section class="module" id="paso6">
     <div class="module-header">
       <div class="module-num">06</div>
@@ -880,6 +894,8 @@ class FacturaResponse(BaseModel):
 
         <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
           <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Endpoints y Lógica de Acceso</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Para el Paso 6, los fundamentos teóricos se centran en el Protocolo de Intercambio de Información, la Persistencia de Identidad y la Seguridad en la Comunicación. En este módulo, el aprendiz comprende cómo el servidor valida quién es el usuario y le otorga una "llave digital" (Token) para interactuar con el sistema.
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             Los <strong>Routers</strong> organizan los puntos de entrada de la API. En el proceso de registro, validamos la unicidad de los datos antes de persistirlos. En el proceso de login, implementamos una verificación cruzada: validamos el hash de la contraseña y, si es correcto, emitimos un <strong>Access Token</strong> que el cliente deberá enviar en las cabeceras de sus futuras peticiones.
           </p>
@@ -976,6 +992,18 @@ def iniciar_sesion(login: schemas.LoginRequest, db: Session = Depends(get_db)):
 
         <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
           <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Persistencia y Gestión de Media</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Este es uno de los puntos más importantes para que tus aprendices de ADSO entiendan cómo se comunica la base de datos (SQLAlchemy) con la validación de datos (Pydantic).
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Fundamento Teórico: Mapeo de Objetos a Diccionarios
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            En el desarrollo con FastAPI, trabajamos con dos mundos diferentes:
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            El mundo de la Base de Datos (ORM): SQLAlchemy devuelve registros como objetos de Python (instancias de una clase). Para acceder a un dato, usamos la sintaxis de punto: usuario.nombre.
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            El mundo de la API (JSON): Pydantic, por defecto, espera recibir diccionarios para convertirlos a JSON. Para acceder a un dato en un diccionario, se usaría: usuario["nombre"].
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            La línea model_config = {'from_attributes': True} es un "traductor" que le dice a Pydantic: "Oye, si te paso un objeto de base de datos en lugar de un diccionario, no falles; simplemente busca los datos en los atributos del objeto".
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             Este módulo implementa el estándar <strong>CRUD</strong> (Create, Read, Update, Delete). Destacan dos conceptos avanzados: 
             1. <strong>Soft Delete:</strong> En el método <code>delete</code>, no eliminamos el registro físicamente para mantener la integridad histórica de las facturas; en su lugar, cambiamos el estado a <code>activo = False</code>. 
