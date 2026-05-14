@@ -386,8 +386,7 @@ CREATE TABLE producto_factura (
     </div>
   </section>
 
-  <!-- PASO 4 -->
-  <section class="module" id="paso4">
+<section class="module" id="paso4">
     <div class="module-header">
       <div class="module-num">04</div>
       <div>
@@ -399,6 +398,14 @@ CREATE TABLE producto_factura (
     <div class="steps-wrap">
       <div class="step">
         <div class="step-header"><span class="step-letter">A</span><span class="step-title">.env — Variables de entorno</span></div>
+        
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Desacoplamiento de Configuración</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            El uso de archivos <code>.env</code> permite separar el código fuente de los datos sensibles (credenciales, llaves secretas). Esto facilita la portabilidad entre entornos de desarrollo, pruebas y producción sin modificar la lógica del backend.
+          </p>
+        </div>
+
         <div class="info-box warn"><div class="ib-title">⚠ Nunca subir el .env a GitHub</div><div class="ib-text">Agregar .env al archivo .gitignore desde el inicio del proyecto. Usar .env.example como plantilla pública sin valores reales.</div></div>
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">env · raíz del proyecto</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
@@ -424,6 +431,14 @@ PANADERIA_DIR=Calle 10 # 5-20, Medellín, Antioquia</code></pre>
 
       <div class="step">
         <div class="step-header"><span class="step-letter">B</span><span class="step-title">database.py — Conexión SQLAlchemy + PostgreSQL</span></div>
+        
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: El Patrón Singleton y Sesiones</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            La función <code>get_db()</code> implementa un generador que gestiona el ciclo de vida de la conexión. Al usar el bloque <code>try...finally</code>, garantizamos que cada petición HTTP abra una sesión y la cierre correctamente, evitando fugas de memoria y saturación del pool de conexiones.
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/database.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from sqlalchemy import create_engine
@@ -432,20 +447,20 @@ from sqlalchemy.orm import sessionmaker
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    POSTGRES_USER:     str = 'panaderia_user'
+    POSTGRES_USER:      str = 'panaderia_user'
     POSTGRES_PASSWORD: str = 'PanSecret2024'
-    POSTGRES_DB:       str = 'panaderia_db'
-    POSTGRES_HOST:     str = 'localhost'
-    POSTGRES_PORT:     str = '5432'
-    SECRET_KEY:        str = 'change_me'
-    ALGORITHM:         str = 'HS256'
+    POSTGRES_DB:        str = 'panaderia_db'
+    POSTGRES_HOST:      str = 'localhost'
+    POSTGRES_PORT:      str = '5432'
+    SECRET_KEY:         str = 'change_me'
+    ALGORITHM:          str = 'HS256'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
-    ADMIN_EMAIL:       str = 'admin@panaderia.com'
-    ADMIN_PASSWORD:    str = 'Admin2024!'
-    ADMIN_NOMBRE:      str = 'Administrador'
-    PANADERIA_NOMBRE:  str = 'Panaderia Demo'
-    PANADERIA_NIT:     str = '000000000-0'
-    PANADERIA_DIR:     str = 'Dirección panadería'
+    ADMIN_EMAIL:        str = 'admin@panaderia.com'
+    ADMIN_PASSWORD:     str = 'Admin2024!'
+    ADMIN_NOMBRE:       str = 'Administrador'
+    PANADERIA_NOMBRE:   str = 'Panaderia Demo'
+    PANADERIA_NIT:      str = '000000000-0'
+    PANADERIA_DIR:      str = 'Dirección panadería'
 
     class Config:
         env_file = '.env'
@@ -459,7 +474,7 @@ DATABASE_URL = (
 
 engine       = create_engine(DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base         = declarative_base()
+Base          = declarative_base()
 
 def get_db():
     '''Generador de sesión de base de datos (dependencia FastAPI)'''
@@ -473,6 +488,14 @@ def get_db():
 
       <div class="step">
         <div class="step-header"><span class="step-letter">C</span><span class="step-title">security.py — JWT y Hash bcrypt</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Autenticación Stateless y Hashing</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Implementamos <strong>Hashing unidireccional</strong> con Bcrypt para proteger las contraseñas (nunca se guardan en texto plano). Complementamos con <strong>JSON Web Tokens (JWT)</strong> para una autenticación sin estado, donde el cliente porta su identidad de forma segura mediante un token firmado criptográficamente.
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/security.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from datetime import datetime, timedelta
@@ -507,6 +530,14 @@ def decode_access_token(token: str) -> Optional[dict]:
 
       <div class="step">
         <div class="step-header"><span class="step-letter">D</span><span class="step-title">dependencies.py — Inyección de dependencias y RBAC</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Inyección de Dependencias y Middleware Lógico</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            FastAPI utiliza la inyección de dependencias para validar la seguridad antes de entrar a un endpoint. Esto permite implementar el <strong>Control de Acceso basado en Roles (RBAC)</strong>, garantizando que solo usuarios con privilegios administrativos ejecuten acciones críticas como crear productos o ver reportes contables.
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/dependencies.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from fastapi import Depends, HTTPException, status
