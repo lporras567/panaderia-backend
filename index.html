@@ -1045,8 +1045,8 @@ async def subir_foto(producto_id: int, file: UploadFile = File(...),
   </section>
 
 
-  <!-- PASO 8 -->
-  <section class="module" id="paso8">
+
+<section class="module" id="paso8">
     <div class="module-header">
       <div class="module-num">08</div>
       <div>
@@ -1057,6 +1057,14 @@ async def subir_foto(producto_id: int, file: UploadFile = File(...),
     <div class="steps-wrap">
       <div class="step">
         <div class="step-header"><span class="step-letter">A</span><span class="step-title">routers/clients.py</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Autorización y Privacidad de Recursos</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            En este módulo implementamos una lógica de <strong>autorización granular</strong>. Mientras que el Admin tiene privilegios globales para gestionar cualquier registro, los usuarios con rol <code>user</code> están limitados por la regla de <strong>Ownership</strong> (Propiedad): el backend valida que el <code>id</code> solicitado coincida con el <code>id</code> extraído del token JWT. Esto garantiza la privacidad de los datos personales y evita ataques de referencia directa insegura a objetos (IDOR).
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/routers/clients.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from fastapi import APIRouter, Depends, HTTPException, status
@@ -1121,6 +1129,9 @@ def desactivar_cliente(cliente_id: int, db: Session = Depends(get_db),
       </div>
     </div>
   </section>
+
+
+
 
   <!-- PASO 9 -->
   <section class="module" id="paso9">
