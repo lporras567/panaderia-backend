@@ -246,14 +246,20 @@ pip install bcrypt==4.0.1 passlib==1.7.4</code></pre>
   </section>
 
 
-  <!-- PASO 3 -->
-  <section class="module" id="paso3">
+<section class="module" id="paso3">
     <div class="module-header">
       <div class="module-num">03</div>
       <div>
         <h2 class="module-title">Modelo de Datos y Base de Datos PostgreSQL</h2>
         <p class="module-subtitle">Diagrama ER y script DDL completo</p>
       </div>
+    </div>
+
+    <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border);">
+      <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 10px;">💡 Fundamento: El Modelo Relacional y Normalización</span>
+      <p style="font-size: 0.9rem; margin: 0; color: #94a3b8; line-height: 1.6;">
+        El diseño se basa en la <strong>integridad referencial</strong>, utilizando Llaves Primarias (PK) para identificar registros únicos y Llaves Foráneas (FK) para establecer vínculos lógicos. Implementamos una relación <strong>N:M (Muchos a Muchos)</strong> entre Productos y Facturas mediante la tabla intermedia <code>producto_factura</code>, permitiendo que una factura contenga múltiples productos y un producto aparezca en múltiples facturas sin redundancia de datos.
+      </p>
     </div>
 
     <div class="er-box">
@@ -303,7 +309,14 @@ pip install bcrypt==4.0.1 passlib==1.7.4</code></pre>
     </div>
 
     <div class="step">
-      <div class="step-header"><span class="step-letter">SQL</span><span class="step-title">Script DDL completo (generado automáticamente por SQLAlchemy)</span></div>
+      <div class="step-header"><span class="step-letter">SQL</span><span class="step-title">Script DDL completo (PostgreSQL)</span></div>
+      
+      <div class="theory-box" style="background: rgba(210, 105, 30, 0.05); padding: 1rem; border-radius: 8px; margin: 1rem 0; border: 1px solid rgba(210, 105, 30, 0.2);">
+        <p style="font-size: 0.85rem; margin: 0; color: #f1f5f9;">
+          <strong>Nota Técnica:</strong> El uso de <code>NUMERIC(12,2)</code> en lugar de <code>FLOAT</code> es fundamental en sistemas contables para evitar errores de redondeo binario. Los tipos <code>ENUM</code> garantizan que solo se ingresen estados válidos a nivel de motor de base de datos.
+        </p>
+      </div>
+
       <div class="code-block">
         <div class="code-toolbar"><span class="code-lang">sql · PostgreSQL 15</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
         <pre><code>-- Tipos ENUM nativos de PostgreSQL
@@ -311,7 +324,7 @@ CREATE TYPE tipo_documento AS ENUM ('CC','NIT','CE','PASAPORTE');
 CREATE TYPE tipo_cliente   AS ENUM ('persona','empresa');
 CREATE TYPE rol_usuario    AS ENUM ('admin','user');
 
--- Tabla de clientes (también son usuarios del sistema)
+-- Tabla de clientes
 CREATE TABLE clientes (
     id                SERIAL PRIMARY KEY,
     tipo_documento    tipo_documento  NOT NULL,
@@ -329,7 +342,7 @@ CREATE TABLE clientes (
     fecha_registro    TIMESTAMP       DEFAULT NOW()
 );
 
--- Tabla de productos del catálogo
+-- Tabla de productos
 CREATE TABLE productos (
     id               SERIAL PRIMARY KEY,
     codigo           VARCHAR(50)     NOT NULL UNIQUE,
@@ -341,7 +354,7 @@ CREATE TABLE productos (
     fecha_creacion   TIMESTAMP       DEFAULT NOW()
 );
 
--- Tabla de facturas (cabecera)
+-- Tabla de facturas
 CREATE TABLE facturas (
     id                  SERIAL PRIMARY KEY,
     codigo_factura      VARCHAR(50)     NOT NULL UNIQUE,
@@ -359,7 +372,7 @@ CREATE TABLE facturas (
     estado              VARCHAR(30)     DEFAULT 'pendiente'
 );
 
--- Tabla de detalle factura (relación N:M entre facturas y productos)
+-- Tabla de detalle factura
 CREATE TABLE producto_factura (
     id               SERIAL PRIMARY KEY,
     factura_id       INTEGER         NOT NULL REFERENCES facturas(id) ON DELETE CASCADE,
