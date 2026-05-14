@@ -1133,8 +1133,7 @@ def desactivar_cliente(cliente_id: int, db: Session = Depends(get_db),
 
 
 
-  <!-- PASO 9 -->
-  <section class="module" id="paso9">
+<section class="module" id="paso9">
     <div class="module-header">
       <div class="module-num">09</div>
       <div>
@@ -1145,6 +1144,17 @@ def desactivar_cliente(cliente_id: int, db: Session = Depends(get_db),
     <div class="steps-wrap">
       <div class="step">
         <div class="step-header"><span class="step-letter">A</span><span class="step-title">routers/invoices.py</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Transaccionalidad y Lógica Maestro-Detalle</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            La creación de una factura es una <strong>operación atómica</strong>. En este endpoint implementamos: 
+            1. <strong>Validación de Reglas de Negocio:</strong> Comprobamos la existencia de productos y la suficiencia de stock antes de cualquier inserción. 
+            2. <strong>Cálculo en Servidor:</strong> Los totales e impuestos se calculan en el backend para evitar manipulaciones desde el cliente. 
+            3. <strong>Sincronización de Inventario:</strong> Por cada renglón de detalle insertado, el sistema actualiza automáticamente el stock disponible, garantizando la consistencia de los datos entre las tablas <code>facturas</code>, <code>producto_factura</code> y <code>productos</code>.
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/routers/invoices.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from fastapi import APIRouter, Depends, HTTPException, status
@@ -1274,6 +1284,8 @@ def cambiar_estado(factura_id: int, estado: str,
       </div>
     </div>
   </section>
+
+
 
   <!-- PASO 10 -->
   <section class="module" id="paso10">
