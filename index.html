@@ -257,7 +257,7 @@ pip install bcrypt==4.0.1 passlib==1.7.4</code></pre>
 
     <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border);">
       <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 10px;">💡 Fundamento: El Modelo Relacional y Normalización</span>
-      <p style="font-size: 0.9rem; margin: 0; color: #94a3b8; line-height: 1.6;">
+      <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
         El diseño se basa en la <strong>integridad referencial</strong>, utilizando Llaves Primarias (PK) para identificar registros únicos y Llaves Foráneas (FK) para establecer vínculos lógicos. Implementamos una relación <strong>N:M (Muchos a Muchos)</strong> entre Productos y Facturas mediante la tabla intermedia <code>producto_factura</code>, permitiendo que una factura contenga múltiples productos y un producto aparezca en múltiples facturas sin redundancia de datos.
       </p>
     </div>
