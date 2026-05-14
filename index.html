@@ -100,8 +100,9 @@
     </div>
   </section>
 
-  <!-- PASO 1 -->
-  <section class="module" id="paso1">
+
+
+<section class="module" id="paso1">
     <div class="module-header">
       <div class="module-num">01</div>
       <div>
@@ -109,6 +110,17 @@
         <p class="module-subtitle">Visión general y organización de carpetas</p>
       </div>
     </div>
+
+    <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border);">
+      <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 10px;">💡 Fundamento: Arquitectura de Tres Capas y Microservicios Contenerizados</span>
+      <p style="font-size: 0.9rem; margin: 0; color: #94a3b8; line-height: 1.6;">
+	Para el Paso 1, los fundamentos teóricos se centran en la Arquitectura de Software y la Modularización por Responsabilidades. Es esencial que el aprendiz visualice cómo un sistema complejo se divide en componentes especializados que colaboran para ofrecer un servicio robusto y escalable.
+      </p>
+      <p style="font-size: 0.9rem; margin: 0; color: #94a3b8; line-height: 1.6;">
+        El proyecto adopta un diseño <strong>desacoplado</strong>. El backend actúa como un proveedor de servicios (API REST), la base de datos asegura la persistencia transaccional y el frontend gestiona la experiencia del usuario. Esta separación permite la <strong>escalabilidad independiente</strong>: podemos actualizar la lógica del servidor sin afectar la interfaz, y viceversa. Todo se orquesta mediante contenedores para asegurar que el entorno de ejecución sea idéntico en desarrollo y producción.
+      </p>
+    </div>
+
     <div class="theory-box">
       <h3>Componentes del sistema</h3>
       <div class="theory-grid">
@@ -121,6 +133,14 @@
 
     <div class="code-step">
       <div class="cs-header"><span class="cs-title">Estructura de carpetas del proyecto</span></div>
+      
+      <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin: 1rem 0; border: 1px solid var(--border);">
+        <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Organización Modular (SoC)</span>
+        <p style="font-size: 0.85rem; margin: 0; color: #94a3b8;">
+          Aplicamos el principio de <strong>Separación de Preocupaciones (Separation of Concerns)</strong>. Cada archivo tiene una única responsabilidad: <code>models.py</code> define qué datos guardamos, <code>schemas.py</code> cómo los validamos y la carpeta <code>routers/</code> cómo los exponemos al mundo. Esta estructura facilita el mantenimiento y el trabajo colaborativo en equipos de desarrollo.
+        </p>
+      </div>
+
       <div class="code-block">
         <div class="code-toolbar"><span class="code-lang">bash · árbol del proyecto</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
         <pre><code>panaderia-digital/
@@ -133,26 +153,27 @@
 │   ├── requirements.txt
 │   └── app/
 │       ├── __init__.py
-│       ├── main.py               ← Punto de entrada FastAPI
-│       ├── database.py           ← Conexión SQLAlchemy + PostgreSQL
-│       ├── models.py             ← Modelos ORM (tablas BD)
-│       ├── schemas.py            ← Schemas Pydantic (validación)
-│       ├── security.py           ← JWT + Hash bcrypt
-│       ├── dependencies.py       ← Dependencias (get_current_user)
-│       ├── notifications.py      ← WebSocket notificaciones
+│       ├── main.py                ← Punto de entrada FastAPI
+│       ├── database.py            ← Conexión SQLAlchemy + PostgreSQL
+│       ├── models.py              ← Modelos ORM (tablas BD)
+│       ├── schemas.py             ← Schemas Pydantic (validación)
+│       ├── security.py            ← JWT + Hash bcrypt
+│       ├── dependencies.py        ← Dependencias (get_current_user)
+│       ├── notifications.py       ← WebSocket notificaciones
 │       └── routers/
 │           ├── __init__.py
-│           ├── auth.py           ← Login / Register
-│           ├── products.py       ← CRUD productos
-│           ├── clients.py        ← CRUD clientes
-│           └── invoices.py       ← CRUD facturas (maestro-detalle)
+│           ├── auth.py            ← Login / Register
+│           ├── products.py        ← CRUD productos
+│           ├── clients.py         ← CRUD clientes
+│           ├── invoices.py        ← CRUD facturas (maestro-detalle)
 │
-├── frontend/                     ← SPA JavaScript Vanilla
+├── frontend/                      ← SPA JavaScript Vanilla
 ├── nginx/
-│   └── nginx.conf                ← Reverse proxy</code></pre>
+│   └── nginx.conf                 ← Reverse proxy</code></pre>
       </div>
     </div>
   </section>
+
 
   <section class="module" id="paso2">
     <div class="module-header">
