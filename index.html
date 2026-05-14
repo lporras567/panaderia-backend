@@ -928,8 +928,8 @@ def iniciar_sesion(login: schemas.LoginRequest, db: Session = Depends(get_db)):
   </section>
 
 
-  <!-- PASO 7 -->
-  <section class="module" id="paso7">
+
+<section class="module" id="paso7">
     <div class="module-header">
       <div class="module-num">07</div>
       <div>
@@ -937,9 +937,20 @@ def iniciar_sesion(login: schemas.LoginRequest, db: Session = Depends(get_db)):
         <p class="module-subtitle">Gestión del catálogo con subida de fotos</p>
       </div>
     </div>
+    
     <div class="steps-wrap">
       <div class="step">
         <div class="step-header"><span class="step-letter">A</span><span class="step-title">routers/products.py</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Persistencia y Gestión de Media</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Este módulo implementa el estándar <strong>CRUD</strong> (Create, Read, Update, Delete). Destacan dos conceptos avanzados: 
+            1. <strong>Soft Delete:</strong> En el método <code>delete</code>, no eliminamos el registro físicamente para mantener la integridad histórica de las facturas; en su lugar, cambiamos el estado a <code>activo = False</code>. 
+            2. <strong>Multipart/Form-Data:</strong> Usamos <code>UploadFile</code> para procesar archivos binarios (fotos), almacenándolos en el sistema de archivos y guardando solo la referencia (URL) en la base de datos.
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/routers/products.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
@@ -1032,6 +1043,7 @@ async def subir_foto(producto_id: int, file: UploadFile = File(...),
       </div>
     </div>
   </section>
+
 
   <!-- PASO 8 -->
   <section class="module" id="paso8">
