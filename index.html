@@ -832,8 +832,8 @@ class FacturaResponse(BaseModel):
     </div>
   </section>
 
-  <!-- PASO 6 -->
-  <section class="module" id="paso6">
+
+<section class="module" id="paso6">
     <div class="module-header">
       <div class="module-num">06</div>
       <div>
@@ -845,6 +845,14 @@ class FacturaResponse(BaseModel):
     <div class="steps-wrap">
       <div class="step">
         <div class="step-header"><span class="step-letter">A</span><span class="step-title">routers/auth.py</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Endpoints y Lógica de Acceso</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Los <strong>Routers</strong> organizan los puntos de entrada de la API. En el proceso de registro, validamos la unicidad de los datos antes de persistirlos. En el proceso de login, implementamos una verificación cruzada: validamos el hash de la contraseña y, si es correcto, emitimos un <strong>Access Token</strong> que el cliente deberá enviar en las cabeceras de sus futuras peticiones.
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/routers/auth.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from fastapi import APIRouter, Depends, HTTPException, status
@@ -918,6 +926,7 @@ def iniciar_sesion(login: schemas.LoginRequest, db: Session = Depends(get_db)):
       </div>
     </div>
   </section>
+
 
   <!-- PASO 7 -->
   <section class="module" id="paso7">
