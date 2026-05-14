@@ -997,15 +997,17 @@ def iniciar_sesion(login: schemas.LoginRequest, db: Session = Depends(get_db)):
         <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
           <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Persistencia y Gestión de Media</span>
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Para el Paso 7, el fundamento teórico se centra en las Operaciones CRUD, la Gestión de Archivos Binarios y el Borrado Lógico. Este módulo permite al aprendiz entender cómo manipular el catálogo de la panadería de forma segura y profesional.
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             Este es uno de los puntos más importantes para que tus aprendices de ADSO entiendan cómo se comunica la base de datos (SQLAlchemy) con la validación de datos (Pydantic).
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             Fundamento Teórico: Mapeo de Objetos a Diccionarios
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             En el desarrollo con FastAPI, trabajamos con dos mundos diferentes:
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
-            El mundo de la Base de Datos (ORM): SQLAlchemy devuelve registros como objetos de Python (instancias de una clase). Para acceder a un dato, usamos la sintaxis de punto: usuario.nombre.
+            1. El mundo de la Base de Datos (ORM): SQLAlchemy devuelve registros como objetos de Python (instancias de una clase). Para acceder a un dato, usamos la sintaxis de punto: usuario.nombre.
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
-            El mundo de la API (JSON): Pydantic, por defecto, espera recibir diccionarios para convertirlos a JSON. Para acceder a un dato en un diccionario, se usaría: usuario["nombre"].
+            2. El mundo de la API (JSON): Pydantic, por defecto, espera recibir diccionarios para convertirlos a JSON. Para acceder a un dato en un diccionario, se usaría: usuario["nombre"].
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             La línea model_config = {'from_attributes': True} es un "traductor" que le dice a Pydantic: "Oye, si te paso un objeto de base de datos en lugar de un diccionario, no falles; simplemente busca los datos en los atributos del objeto".
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
@@ -1125,6 +1127,8 @@ async def subir_foto(producto_id: int, file: UploadFile = File(...),
         <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
           <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Autorización y Privacidad de Recursos</span>
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Para el Paso 8, el fundamento teórico se centra en la Privacidad de Datos, la Autorización de Propietario (Ownership) y la Seguridad Administrativa. Este módulo es clave para que el aprendiz entienda que estar autenticado no es suficiente; el sistema debe validar si el usuario tiene permiso específico sobre el recurso que intenta consultar o modificar.
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             En este módulo implementamos una lógica de <strong>autorización granular</strong>. Mientras que el Admin tiene privilegios globales para gestionar cualquier registro, los usuarios con rol <code>user</code> están limitados por la regla de <strong>Ownership</strong> (Propiedad): el backend valida que el <code>id</code> solicitado coincida con el <code>id</code> extraído del token JWT. Esto garantiza la privacidad de los datos personales y evita ataques de referencia directa insegura a objetos (IDOR).
           </p>
         </div>
@@ -1211,6 +1215,8 @@ def desactivar_cliente(cliente_id: int, db: Session = Depends(get_db),
 
         <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
           <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Transaccionalidad y Lógica Maestro-Detalle</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Para el Paso 9, los fundamentos teóricos se centran en la Lógica de Negocio Transaccional, la Integridad de Inventarios y el Patrón Maestro-Detalle. Este módulo es el cerebro del sistema, donde se coordinan múltiples tablas para procesar una venta real.
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             La creación de una factura es una <strong>operación atómica</strong>. En este endpoint implementamos: 
             1. <strong>Validación de Reglas de Negocio:</strong> Comprobamos la existencia de productos y la suficiencia de stock antes de cualquier inserción. 
@@ -1365,6 +1371,8 @@ def cambiar_estado(factura_id: int, estado: str,
 
         <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
           <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Protocolo Full-Duplex y Broadcasting</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            Para el Paso 10, los fundamentos teóricos se centran en la Comunicación Bidireccional y la Orquestación de la Aplicación. Este módulo explica cómo el sistema mantiene una conexión persistente para eventos en tiempo real y cómo se ensamblan todos los componentes (routers, base de datos y seguridad) en un único punto de entrada.
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             A diferencia del protocolo HTTP tradicional (Petición-Respuesta), <strong>WebSockets</strong> permite una comunicación bidireccional y persistente. El <code>ConnectionManager</code> implementa el patrón <strong>Observer</strong>: mantiene una lista de clientes activos y utiliza la técnica de <strong>Broadcasting</strong> para enviar mensajes instantáneos sin que el cliente los solicite, ideal para alertas de nuevas ventas en el panel administrativo.
           </p>
