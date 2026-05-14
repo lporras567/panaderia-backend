@@ -200,7 +200,8 @@
         <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
         2. Entornos Virtuales (venv): El aislamiento es crítico en Python. Un entorno virtual crea un espacio independiente del sistema operativo para instalar dependencias, evitando conflictos entre proyectos y manteniendo el sistema "limpio".  
         <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
-        3. Versionamiento y Compatibilidad: En el desarrollo real, las librerías evolucionan a ritmos distintos. El caso de passlib y bcrypt es un ejemplo clásico de cómo cambios en la API de una librería pueden afectar a otras, requiriendo el uso de versiones específicas para mantener la operatividad.  
+        3. Versionamiento y Compatibilidad: En el desarrollo real, las librerías evolucionan a ritmos distintos. El caso de passlib y bcrypt es un ejemplo clásico de cómo cambios en la API de una librería pueden afectar a otras, requiriendo el uso de versiones específicas para mantener la operatividad. 
+	<br> 
         <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
         El archivo <code>requirements.txt</code> actúa como un contrato de versiones. Garantiza que el software sea reproducible en cualquier máquina, evitando fallos por actualizaciones inesperadas de terceros.
         </p>
@@ -291,6 +292,7 @@ pip install bcrypt==4.0.1 passlib==1.7.4</code></pre>
       <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 10px;">💡 Fundamento: El Modelo Relacional y Normalización</span>
       <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
         Para el Paso 3, los fundamentos teóricos deben centrarse en el Diseño Relacional, la Integridad Referencial y la Optimización de Tipos de Datos. Este es el momento donde el aprendiz entiende cómo la lógica de negocio de la panadería se convierte en una estructura rígida y segura.
+      <br>
       <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
         El diseño se basa en la <strong>integridad referencial</strong>, utilizando Llaves Primarias (PK) para identificar registros únicos y Llaves Foráneas (FK) para establecer vínculos lógicos. Implementamos una relación <strong>N:M (Muchos a Muchos)</strong> entre Productos y Facturas mediante la tabla intermedia <code>producto_factura</code>, permitiendo que una factura contenga múltiples productos y un producto aparezca en múltiples facturas sin redundancia de datos.
       </p>
@@ -440,6 +442,7 @@ CREATE TABLE producto_factura (
           <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Desacoplamiento de Configuración</span>
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             Para el Paso 4, los fundamentos teóricos se centran en la Seguridad de la Información, la Gestión de Configuración y el Control de Acceso Basado en Roles (RBAC). Este módulo es crítico porque establece las capas de protección de la Panadería Digital.
+          <br>
           <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
             El uso de archivos <code>.env</code> permite separar el código fuente de los datos sensibles (credenciales, llaves secretas). Esto facilita la portabilidad entre entornos de desarrollo, pruebas y producción sin modificar la lógica del backend.
           </p>
