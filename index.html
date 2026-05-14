@@ -586,8 +586,7 @@ def require_admin(
     </div>
   </section>
 
-  <!-- PASO 5 -->
-  <section class="module" id="paso5">
+<section class="module" id="paso5">
     <div class="module-header">
       <div class="module-num">05</div>
       <div>
@@ -595,9 +594,18 @@ def require_admin(
         <p class="module-subtitle">ORM para las tablas y validación de datos de entrada/salida</p>
       </div>
     </div>
+
     <div class="steps-wrap">
       <div class="step">
         <div class="step-header"><span class="step-letter">A</span><span class="step-title">models.py — Modelos ORM</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Mapeo Objeto-Relacional (ORM)</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            El ORM actúa como un puente que permite manipular la base de datos PostgreSQL utilizando clases de Python. Aquí definimos la <strong>estructura física</strong>: tipos de datos, llaves primarias, foráneas y relaciones de carga (<code>relationship</code>). Esto abstrae el lenguaje SQL y protege la aplicación mediante el uso de parámetros seguros en las consultas.
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/models.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from sqlalchemy import (
@@ -620,21 +628,21 @@ class RolUsuario(str, enum.Enum):
 
 class Cliente(Base):
     __tablename__ = 'clientes'
-    id               = Column(Integer, primary_key=True, index=True)
-    tipo_documento   = Column(SAEnum(TipoDocumento), nullable=False)
+    id                = Column(Integer, primary_key=True, index=True)
+    tipo_documento    = Column(SAEnum(TipoDocumento), nullable=False)
     numero_documento = Column(String(30), unique=True, nullable=False)
-    nombre           = Column(String(200), nullable=False)
-    tipo_cliente     = Column(SAEnum(TipoCliente), default=TipoCliente.persona)
-    direccion        = Column(String(300), nullable=False)
-    municipio        = Column(String(100), nullable=False)
-    departamento     = Column(String(100), nullable=False)
-    celular          = Column(String(20))
-    correo           = Column(String(150), unique=True, nullable=False, index=True)
-    password_hash    = Column(String(255), nullable=False)
-    rol              = Column(SAEnum(RolUsuario), default=RolUsuario.user)
-    activo           = Column(Boolean, default=True)
-    fecha_registro   = Column(DateTime(timezone=True), server_default=func.now())
-    facturas         = relationship('Factura', back_populates='cliente')
+    nombre            = Column(String(200), nullable=False)
+    tipo_cliente      = Column(SAEnum(TipoCliente), default=TipoCliente.persona)
+    direccion         = Column(String(300), nullable=False)
+    municipio         = Column(String(100), nullable=False)
+    departamento      = Column(String(100), nullable=False)
+    celular           = Column(String(20))
+    correo            = Column(String(150), unique=True, nullable=False, index=True)
+    password_hash     = Column(String(255), nullable=False)
+    rol               = Column(SAEnum(RolUsuario), default=RolUsuario.user)
+    activo            = Column(Boolean, default=True)
+    fecha_registro    = Column(DateTime(timezone=True), server_default=func.now())
+    facturas          = relationship('Factura', back_populates='cliente')
 
 class Producto(Base):
     __tablename__ = 'productos'
@@ -684,6 +692,14 @@ class ProductoFactura(Base):
 
       <div class="step">
         <div class="step-header"><span class="step-letter">B</span><span class="step-title">schemas.py — Schemas Pydantic (validación)</span></div>
+
+        <div class="theory-box" style="background: rgba(56, 189, 248, 0.05); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <span class="fundamento" style="color: var(--primary); font-weight: 600; display: block; margin-bottom: 5px;">💡 Fundamento: Contratos de Datos y Validación de Tipos</span>
+          <p style="font-size: 0.9rem; margin: 0; color: #94a3b8;">
+            A diferencia de los modelos ORM, los Schemas de Pydantic definen la <strong>estructura lógica</strong> de los datos que viajan por la red. Permiten validar que un correo tenga formato válido (<code>EmailStr</code>), imponer reglas de negocio (ej. longitud mínima de contraseña) y filtrar qué información devolvemos al cliente (ej. ocultar el hash de la contraseña en las respuestas).
+          </p>
+        </div>
+
         <div class="code-block">
           <div class="code-toolbar"><span class="code-lang">python · backend/app/schemas.py</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div>
           <pre><code>from pydantic import BaseModel, EmailStr, field_validator
@@ -696,13 +712,13 @@ from .models import TipoDocumento, TipoCliente, RolUsuario
 class ClienteBase(BaseModel):
     tipo_documento:   TipoDocumento
     numero_documento: str
-    nombre:           str
-    tipo_cliente:     TipoCliente = TipoCliente.persona
-    direccion:        str
-    municipio:        str
-    departamento:     str
-    celular:          Optional[str] = None
-    correo:           EmailStr
+    nombre:            str
+    tipo_cliente:      TipoCliente = TipoCliente.persona
+    direccion:         str
+    municipio:         str
+    departamento:      str
+    celular:           Optional[str] = None
+    correo:            EmailStr
 
 class ClienteCreate(ClienteBase):
     password: str
@@ -722,9 +738,9 @@ class ClienteUpdate(BaseModel):
     celular:      Optional[str]         = None
 
 class ClienteResponse(ClienteBase):
-    id:             int
-    rol:            RolUsuario
-    activo:         bool
+    id:              int
+    rol:             RolUsuario
+    activo:          bool
     fecha_registro: datetime
     model_config = {'from_attributes': True}
 
@@ -756,8 +772,8 @@ class ProductoUpdate(BaseModel):
     activo:         Optional[bool]    = None
 
 class ProductoResponse(ProductoBase):
-    id:             int
-    activo:         bool
+    id:              int
+    activo:          bool
     fecha_creacion: datetime
     model_config = {'from_attributes': True}
 
@@ -773,17 +789,17 @@ class LineaFacturaCreate(BaseModel):
         return v
 
 class LineaFacturaResponse(BaseModel):
-    id:              int
-    producto_id:     int
-    producto:        ProductoResponse
+    id:               int
+    producto_id:      int
+    producto:         ProductoResponse
     precio_unitario: Decimal
-    cantidad:        int
+    cantidad:         int
     total_renglon:   Decimal
     model_config = {'from_attributes': True}
 
 class FacturaCreate(BaseModel):
     cliente_id:        int
-    pct_iva:           Decimal = Decimal('19.00')
+    pct_iva:            Decimal = Decimal('19.00')
     es_compra_digital: bool    = False
     lineas:            List[LineaFacturaCreate]
     @field_validator('lineas')
@@ -794,7 +810,7 @@ class FacturaCreate(BaseModel):
         return v
 
 class FacturaResponse(BaseModel):
-    id:                int
+    id:                 int
     codigo_factura:    str
     fecha_creacion:    datetime
     fecha_vencimiento: datetime
